@@ -3,11 +3,11 @@ package fcm
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"io/ioutil"
 	"net"
 	"net/http"
 	"strconv"
-	"strings"
 	"time"
 )
 
@@ -76,6 +76,9 @@ type Client struct {
 	retryAfter string
 }
 
+// NewClient returns an FCM client. The client is expected to be
+// long-lived. It maintains an internal pool of HTTP connections.
+// Multiple sumultaneous Send requests can be issued on the same client.
 func NewClient(apikey string) *Client {
 	return &Client{
 		apiKey: "key=" + apikey,
@@ -135,6 +138,8 @@ func (c *Client) Send(msg *HttpMessage) (*HttpResponse, error) {
 	return &response, err
 }
 
+// GetRetryAfter returns the number fo seconds to wait before retrying Send in case the previous
+// Send has failed.
 func (c *Client) GetRetryAfter() uint {
 	if c.retryAfter == "" {
 		return 0
@@ -152,6 +157,7 @@ func (c *Client) GetRetryAfter() uint {
 	return 0
 }
 
-func (c *Client) Post(msg *HttpMessage) <-chan *HttpResponse {
-	return nil
+// Post is a non-blocking version of Send. Not implemented yet.
+func (c *Client) Post(msg *HttpMessage) (<-chan *HttpResponse, error) {
+	return nil, errors.New("Not implmented")
 }
