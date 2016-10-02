@@ -7,7 +7,8 @@ Basic implementation of FCM (firebase cloud messaging) in Go. Only HTTP requests
 
 ## Usage:
 
-```client := fcm.NewClient(your_fcm_api_key)
+```
+client := fcm.NewClient(your_fcm_api_key)
 
   message := &fcm.HttpMessage{...initialize your message...}
   response := client.SendHttp(message)
