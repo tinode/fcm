@@ -16,11 +16,11 @@ const (
 	server_url = "https://fcm.googleapis.com/fcm/send"
 
 	// Network timeout for connecting to the server. Not setting it may create a large
-	// pool of waiting connectins in acse of network problems.
+	// pool of waiting connectins in case of network problems.
 	connection_timeout = 5 * time.Second
 )
 
-// Message is an FCM request message
+// HttpMessage is an FCM HTTP request message
 type HttpMessage struct {
 	To                    string        `json:"to,omitempty"`
 	RegistrationIds       []string      `json:"registration_ids,omitempty"`
@@ -35,7 +35,7 @@ type HttpMessage struct {
 	Notification          *Notification `json:"notification,omitempty"`
 }
 
-// Response is an FCM response message
+// HttpResponse is an FCM response message
 type HttpResponse struct {
 	MulticastId  int      `json:"multicast_id"`
 	Success      int      `json:"success"`
@@ -91,10 +91,10 @@ func NewClient(apikey string) *Client {
 	}
 }
 
-// Send is a blocking call to send a message to FCM server.
+// SendHttp is a blocking call to send an HTTP message to FCM server.
 // Multiple Send requests can be issued simultaneously on the same
 // Client.
-func (c *Client) Send(msg *HttpMessage) (*HttpResponse, error) {
+func (c *Client) SendHttp(msg *HttpMessage) (*HttpResponse, error) {
 
 	// Encode message to JSON
 	var rw bytes.Buffer
@@ -157,7 +157,7 @@ func (c *Client) GetRetryAfter() uint {
 	return 0
 }
 
-// Post is a non-blocking version of Send. Not implemented yet.
-func (c *Client) Post(msg *HttpMessage) (<-chan *HttpResponse, error) {
+// PostHttp is a non-blocking version of Send. Not implemented yet.
+func (c *Client) PostHttp(msg *HttpMessage) (<-chan *HttpResponse, error) {
 	return nil, errors.New("Not implmented")
 }
