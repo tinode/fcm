@@ -5,8 +5,10 @@ import (
 	"encoding/json"
 	"errors"
 	"io/ioutil"
+	"log"
 	"net"
 	"net/http"
+	"net/http/httputil"
 	"strconv"
 	"time"
 )
@@ -18,6 +20,25 @@ const (
 	// Network timeout for connecting to the server. Not setting it may create a large
 	// pool of waiting connectins in case of network problems.
 	connection_timeout = 5 * time.Second
+
+	PriorityHigh   = "high"
+	PriorityNormal = "normal"
+)
+
+// Error messages
+const (
+	ErrorMissingRegistration       = "MissingRegistration"
+	ErrorInvalidRegistration       = "InvalidRegistration"
+	ErrorNotRegistered             = "NotRegistered"
+	ErrorInvalidPackageName        = "InvalidPackageName"
+	ErrorMismatchSenderId          = "MismatchSenderId"
+	ErrorMessageTooBig             = "MessageTooBig"
+	ErrorInvalidDataKey            = "InvalidDataKey"
+	ErrorInvalidTtl                = "InvalidTtl"
+	ErrorUnavailable               = "Unavailable"
+	ErrorInternalServerError       = "InternalServerError"
+	ErrorDeviceMessageRateExceeded = "DeviceMessageRateExceeded"
+	ErrorTopicsMessageRateExceeded = "TopicsMessageRateExceeded"
 )
 
 // HttpMessage is an FCM HTTP request message
@@ -112,23 +133,34 @@ func (c *Client) SendHttp(msg *HttpMessage) (*HttpResponse, error) {
 	req.Header.Add(http.CanonicalHeaderKey("Content-Type"), "application/json")
 	req.Header.Add(http.CanonicalHeaderKey("Authorization"), c.apiKey)
 
+	//debug, err := httputil.DumpRequest(req, true)
+	//log.Printf("request: '%s'", string(debug))
+
 	// Call the server, issue HTTP POST, wait for response
 	httpResp, err := c.connection.RoundTrip(req)
 	if err != nil {
 		return nil, err
 	}
 
+	debug, err := httputil.DumpResponse(httpResp, true)
+	log.Printf("response: '%s'", string(debug))
+
 	// Read response completely and close the body to make
 	// the underlying connection reusable.
-	data, err := ioutil.ReadAll(httpResp.Body)
+	body, err := ioutil.ReadAll(httpResp.Body)
 	httpResp.Body.Close()
 	if err != nil {
 		return nil, err
 	}
 
+	if httpResp.StatusCode != http.StatusOK {
+		// Assuming non-JSON response
+		return nil, errors.New(httpResp.Status + ": " + string(body))
+	}
+
 	// Decode JSON response
 	var response HttpResponse
-	err = json.Unmarshal(data, &response)
+	err = json.Unmarshal(body, &response)
 
 	// Get value of retry-after if present
 	if err == nil {
