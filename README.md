@@ -14,7 +14,7 @@ Basic implementation of FCM (firebase cloud messaging) in Go. Only HTTP requests
   response := client.SendHttp(message)
 ```
 
-The `client` is safe to use from multiple go routines at the same time. Do not recreate client for every request because it's wasteful.
+The `client` is safe to use from multiple go routines at the same time. The client maintains a pool of HTTP connections. It recycles them as needed. Do not recreate client for every request because it's wasteful.
 `SendHttp` is a blocking call. 
 
 ## Installation
