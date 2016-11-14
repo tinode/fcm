@@ -136,6 +136,9 @@ func (c *Client) SendHttp(msg *HttpMessage) (*HttpResponse, error) {
 
 	// Call the server, issue HTTP POST, wait for response
 	httpResp, err := c.connection.RoundTrip(req)
+	if httpResp != nil {
+        	defer httpResp.Body.Close()
+    	}
 	if err != nil {
 		return nil, err
 	}
@@ -146,7 +149,6 @@ func (c *Client) SendHttp(msg *HttpMessage) (*HttpResponse, error) {
 	// Read response completely and close the body to make
 	// the underlying connection reusable.
 	body, err := ioutil.ReadAll(httpResp.Body)
-	httpResp.Body.Close()
 	if err != nil {
 		return nil, err
 	}
