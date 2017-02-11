@@ -5,10 +5,8 @@ import (
 	"encoding/json"
 	"errors"
 	"io/ioutil"
-	// "log"
 	"net"
 	"net/http"
-	"net/http/httputil"
 	"strconv"
 	"time"
 )
@@ -138,17 +136,19 @@ func (c *Client) SendHttp(msg *HttpMessage) (*HttpResponse, error) {
 
 	// Call the server, issue HTTP POST, wait for response
 	httpResp, err := c.connection.RoundTrip(req)
+	if httpResp != nil {
+		defer httpResp.Body.Close()
+	}
 	if err != nil {
 		return nil, err
 	}
 
-	debug, err := httputil.DumpResponse(httpResp, true)
+	// debug, err := httputil.DumpResponse(httpResp, true)
 	// log.Printf("response: '%s'", string(debug))
 
 	// Read response completely and close the body to make
 	// the underlying connection reusable.
 	body, err := ioutil.ReadAll(httpResp.Body)
-	httpResp.Body.Close()
 	if err != nil {
 		return nil, err
 	}
