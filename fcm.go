@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"io/ioutil"
-	"log"
+	// "log"
 	"net"
 	"net/http"
 	"net/http/httputil"
@@ -143,7 +143,7 @@ func (c *Client) SendHttp(msg *HttpMessage) (*HttpResponse, error) {
 	}
 
 	debug, err := httputil.DumpResponse(httpResp, true)
-	log.Printf("response: '%s'", string(debug))
+	// log.Printf("response: '%s'", string(debug))
 
 	// Read response completely and close the body to make
 	// the underlying connection reusable.
