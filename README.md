@@ -1,5 +1,6 @@
 # Golang FCM
-Basic implementation of FCM (firebase cloud messaging) in Go. Only HTTP requests with JSON payload are supported.
+Basic implementation of FCM (firebase cloud messaging) in Go. Only HTTP requests with JSON payload are supported. The reason for this implementation is to ensure HTTP requests are properly pooled and responses are closed.
+This library is used by https://github.com/tinode/chat.
 
 ## Documentation
 
