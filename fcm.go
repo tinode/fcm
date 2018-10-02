@@ -13,11 +13,11 @@ import (
 
 const (
 	// FCM server address
-	server_url = "https://fcm.googleapis.com/fcm/send"
+	serverURL = "https://fcm.googleapis.com/fcm/send"
 
 	// Network timeout for connecting to the server. Not setting it may create a large
 	// pool of waiting connectins in case of network problems.
-	connection_timeout = 5 * time.Second
+	connectionTimeout = 5 * time.Second
 
 	PriorityHigh   = "high"
 	PriorityNormal = "normal"
@@ -103,9 +103,9 @@ func NewClient(apikey string) *Client {
 		apiKey: "key=" + apikey,
 		connection: &http.Transport{
 			Dial: (&net.Dialer{
-				Timeout: connection_timeout,
+				Timeout: connectionTimeout,
 			}).Dial,
-			TLSHandshakeTimeout: connection_timeout,
+			TLSHandshakeTimeout: connectionTimeout,
 		},
 	}
 }
@@ -124,7 +124,7 @@ func (c *Client) SendHttp(msg *HttpMessage) (*HttpResponse, error) {
 	}
 
 	// Format request
-	req, err := http.NewRequest(http.MethodPost, server_url, &rw)
+	req, err := http.NewRequest(http.MethodPost, serverURL, &rw)
 	if err != nil {
 		return nil, err
 	}

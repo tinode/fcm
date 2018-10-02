@@ -1,5 +1,7 @@
 # Golang FCM
+
 Basic implementation of FCM (firebase cloud messaging) in Go. Only HTTP requests with JSON payload are supported.
+This package uses legacy HTTP API (pre-v1 API). 
 
 ## Documentation
 
